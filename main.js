@@ -10,7 +10,7 @@ while (playGame === 's') {
     console.log('Your current Stats');
     console.log(userStats);
 
-
+    console.log(getRandomFish().toUpperCase())
 }
 
 function getRandomFish() {
@@ -20,6 +20,12 @@ function getRandomFish() {
     adjArr2 = ['nasty', 'daffy', 'special', 'extra-large', 'cowardly', 'medical', 'lamentable', 'zonked', 'careful', 'clever', 'royal', 'filthy']
     fishArr = ['angel fish', 'lizardfish', 'alligator gar', 'bluefish', 'vermillion snapper', 'blue marlin', 'tarpon', 'cod', 'king mackerel', 'swordfish']
 
+    const adjRand = Math.floor(Math.random() * adjArr.length);
+    const adjRand2 = Math.floor(Math.random() * adjArr2.length);
+    const fishRand = Math.floor(Math.random() * fishArr.length);
+
+
+    return adjArr[adjRand] + ' ' + adjArr2[adjRand2] + ' ' + fishArr[fishRand];
 
 
 }
