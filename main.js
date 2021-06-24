@@ -8,36 +8,47 @@ console.log('Where you can fish 6 hours');
 console.log('Possibly bring home a trophy fish!');
 console.log('!!!NO MORE THAN 10 LBS!!!')
 console.log('');
-let counter = 1
-let userStats = { fishingTime: 0, fishweight: 0, fishValue: 0 };
+let userStats = { time: 0, weight: 0, value: 0 };
 let playGame = prompt('Type [s] to start the game!');
 
 console.clear()
 let totalFish = []
 while (playGame === 's') {
+
     console.log('Your current Stats');
-    console.log('Total weight: ', userStats.fishweight, 10 - userStats.fishweight, ' lbs left till over weight');
-    console.log('Time on Water: ', userStats.fishingTime, 360 - userStats.fishingTime, ' minutes left to fish.');
-    console.log('Value in Fish Bag: ', userStats.fishValue);
-    console.log('')
-    if (userStats.fishingTime < 360 && userStats.fishweight < 10) {
+    // let timeStamp = timeStamp()
+    // console.log(timeStamp)
+    console.log('Total weight: ', Number(userStats.weight.toFixed(2)), '  |  ',
+        Number((10 - userStats.weight).toFixed(2)), ' lbs left till over weight');
+    console.log('Time on Water: ', userStats.time, 360 - userStats.time, ' minutes left to fish.');
+    console.log('Value in Fish Bag: $', Number(userStats.value.toFixed(2)));
+    console.log('');
+
+    if (userStats.time < 360 && userStats.weight < 10) {
 
         let fishTemp = getRandomFish();
-
-        console.log(fishTemp.weight)
-        console.log(fishTemp.value)
-        console.log(fishTemp.name)
-        console.log(fishTemp.time)
+        let fishPasser = [];
+        fishPasser.push(fishTemp);
+        displayFish(fishPasser);
+        console.log('NICE! You caught a ', fishTemp.name)
+        console.log('This fin flipper weights ', fishTemp.weight, )
+        console.log('Which between the fisha and the size is valued at $', fishTemp.value)
+        console.log('And to think it took you ', fishTemp.time, 'minsc to catch it!');
+        console.log('That puts your times worth at $',
+            Number((fishTemp.value / fishTemp.time).toFixed(2)), ' per minute!')
+        console.log('Are we going to keep it?')
         const keeper = prompt('[c]atch or [r]elease or [d]isplay');
 
         console.clear()
 
         if (keeper === 'c') {
-            userStats.fishweight += fishTemp.weight;
+            userStats.weight += fishTemp.weight;
+            userStats.time += fishTemp.time;
+            userStats.value += fishTemp.value;
             totalFish.push(fishTemp);
         }
         if (keeper === 'r') {
-            console.log('I agree send that little minnow back!');
+            console.log('I agree, send that little minnow back!');
         }
         if (keeper === 'd') {
             console.log('Was good fishin with ya buddy.');
@@ -47,31 +58,63 @@ while (playGame === 's') {
             console.log(displayFish(totalFish))
         }
     } else {
-        if (userStats.fishweight >= 10) {
+        while (userStats.weight >= 10) {
             console.clear();
             console.log('You are over your weight limit please select a fish to throw back. You can not be more than 10 lbs')
             console.log('Here are a list of the fish in your bag');
             for (let i = 0; i < totalFish.length; i++) {
                 const fish = totalFish[i];
-                console.log(i + 1, ' |  ', fish.name, ' |  ', fish.weight, ' | ', fish.time, ' | ', fish.value)
+                console.log(i + 1, ' |  ', fish.name, ' |  ', 'Weight: ', fish.weight, ' | ', 'Time: ', Math.floor(fish.time), ' Mins | ', 'Total Value $', fish.value)
                 console.log('');
             }
+            console.log('Total Weight: ', userStats.weight, 'lbs | ', 'Total Time: ', Number(userStats.time.toFixed(2), ' Mins'));
             let legal = prompt('Do you wish to throw a fish back and stay within you legal parameters? [y]es | [n]o:   ');
+
             if (legal === 'y') {
                 let throwBack = prompt('Which number fish would you like to release to stay legal?  ');
+                console.log(totalFish[throwBack - 1])
+                userStats.weight -= Number(totalFish[throwBack - 1].weight);
                 totalFish.splice(Number(throwBack) - 1, 1);
+
             }
             if (legal === 'n') {
                 // use this area to run a simple random test to see if the player will be picked up by the game warden.
                 // if the player loses the roll of the dice, player will lose all fish | get a fine | Lose Game | GAME OVER
+
+                let gameOver = Math.floor(Math.random() * 3);
+                console.clear();
+                if (gameOver % 2 === 0) {
+                    console.clear();
+                    console.log('GAME OVER - But you get to walk away witht he spoils');
+                    console.log(' Due to your transgressions you have earned ', userStats.value);
+                    console.log('');
+                    console.log("Don't go spending it all in one place now!")
+                } else {
+                    console.clear();
+                    console.log('GAME OVER - You have encountered the Game Warden.')
+                    console.log('')
+                    console.log('The Warden confiscates all your fish, hands you a  fine for ', userStats.value * 2, ' which is twice a much as you would have earned had you stayed legal...');
+                    console.log('Was it worth it?  eh... it is just fishing and money.... who needs either anyways?')
+
+                }
             }
 
         }
-        if (userStats.fishingTime >= 360) {
+        if (userStats.time >= 360) {
+            console.clear();
             console.log('Take it easy man you have been in the sun too long!')
+            console.log('6 hours if your max. You have been out here');
+            console.log('Let us call it a day, man.');
+            console.log('Here are your stats for the day: ');
+            console.log('Total Time:      ', userStats.time);
+            console.log('Total Fish:      ', totalFish.length);
+            console.log('Total Weight:    ', Number(userStats.weight.toFixed(2)));
+            console.log('Total Value:      $', Number(userStats.value.toFixed(2)));
+            playGame = 0
         }
     }
 }
+
 
 function getRandomFish() {
 
@@ -88,16 +131,14 @@ function getRandomFish() {
     caughtFish.name = adjArr[adjRand] + ' ' + adjArr2[adjRand2] + ' ' + fishArr[fishRand];
 
 
-    const weightRand = (Math.random() * 10) + 1;
-    caughtFish.weight = weightRand;
+    caughtFish.weight = (Math.random() * 5) + 1;
+    caughtFish.weight = Number(caughtFish.weight.toFixed(2));
 
-    console.log('Random Weight: ', weightRand)
+    caughtFish.value = Math.random() * 100;
+    caughtFish.value = Number(caughtFish.value.toFixed(2));
 
-    const valueRand = Math.random() * 100;
-    caughtFish.value = valueRand
-
-    const timeRand = Math.random() * 60;
-    caughtFish.time = timeRand
+    caughtFish.time = Math.random() * 60;
+    caughtFish.time = Number(caughtFish.time.toFixed(2));
 
     return caughtFish;
 
@@ -175,14 +216,17 @@ function displayFish(fishArr) {
         if (fish.name.includes('blue marlin')) {
             console.log('------------------------------------------')
             console.log('Got yourself a ', fish.name);
+            console.log('------------------------------------------')('------------------------------------------')
             console.log('------------------------------------------')
-            console.log(',')
-            console.log('<><')
-            console.log(' `   Max')
+        }
+        if (fish.name.includes('king mackerel')) {
+            console.log('------------------------------------------')
+            console.log('Got yourself a ' ('<><'));
+            console.log(' `   Max');
             console.log('');
             console.log('weighting in at: ', fish.weight, ' lbs');
             console.log('And a market value of: $', fish.value);
-            console.log('------------------------------------------')
+            console.log('------------------------------------------');
             console.log('------------------------------------------')
         }
         if (fish.name.includes('tarpon')) {
@@ -202,9 +246,7 @@ function displayFish(fishArr) {
             console.log('------------------------------------------')
             console.log('Got yourself a ', fish.name);
             console.log('------------------------------------------')
-            console.log(',')
-            console.log('<><')
-            console.log(' `   Max')
+
             console.log('');
             console.log('weighting in at: ', fish.weight, ' lbs');
             console.log('And a market value of: $', fish.value);
@@ -239,6 +281,17 @@ function displayFish(fishArr) {
             console.log('------------------------------------------')
             console.log('------------------------------------------')
         }
+    }
+
+    function timeStamp() {
+        let today = new Date();
+        let day = today.getDay();
+        let hour = today.getHours();
+        let minute = today.getMinutes();
+        let second = today.getSeconds();
+        let weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        return console.log('As of now it is:' / n,
+            weekDays[day], ' ', hour, ' ', minute, ' ', second)
     }
 
 }
